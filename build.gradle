@@ -63,7 +63,7 @@ publishing {
             version = project.version
 
             artifact(tasks.shadowJar) {
-                classfier = null
+                classifier = null
             }
         }
     }
