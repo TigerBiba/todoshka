@@ -1,16 +1,18 @@
 plugins {
     id 'java'
+    id 'maven-publish'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'org.example'
-version = findProperty('version') ?: '0.1.0'
+version = findProperty('version') ?: '0.2.0'
 
 sourceCompatibility = '23'
 targetCompatibility = '23'
 
 mainClassName = 'org.example.TodoApp'
+
 
 repositories {
     mavenCentral()
@@ -51,4 +53,28 @@ tasks.named('startShadowScripts') {
 
 tasks.build {
     dependsOn shadowJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'org.example'
+            artifactId = 'todoshka'
+            version = project.version
+
+            artifact(tasks.shadowJar) {
+                classfier = null
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/TigerBiba/todoshka")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
